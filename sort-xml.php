@@ -25,7 +25,7 @@ try {
     echo 'Connection failed: ' . $e->getMessage();
 }
 
-$XmlSorter = new XmlSorter(['pdo' => $pdo,'database' => $options->database->database]);
+$XmlSorter = new XmlSorter(['pdo' => $pdo, 'dbOptions' => $options]);
 
 if(array_key_exists('v', $commandLineOptions)) $XmlSorter->verbosity = 10;
 

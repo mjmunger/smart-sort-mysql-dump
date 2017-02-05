@@ -7,10 +7,38 @@ class XMLSorter
 	public $verbosity             = 0;
 	public $database              = NULL;
 	public $tablesMap             = [];
+	public $dbOptions             = NULL;
+	public $defaultsFilePath      = NULL;
 
 	function __construct($options) {
-		$this->pdo      = $options['pdo'];
-		$this->database = $options['database'];
+		$this->pdo       = $options['pdo'];
+		$this->database  = $options['dbOptions']->database->database;
+		$this->dbOptions = $options['dbOptions'];
+	}
+
+	function writeDefaultsFile() {
+
+		$this->defaultsFilePath = tempnam('/tmp/', 'defaults_');
+		$fh = fopen($this->defaultsFilePath, 'w');
+
+
+		fwrite($fh, "[client]" . PHP_EOL);
+		fwrite($fh, "user=" . $this->dbOptions->database->username . PHP_EOL);
+		fwrite($fh, "password=".$this->dbOptions->database->password . PHP_EOL);
+		fwrite($fh, "protocol=tcp" . PHP_EOL);
+		fwrite($fh, "port=3306" . PHP_EOL);
+		fwrite($fh, "" . PHP_EOL);
+		fwrite($fh, "[mysqldump]" . PHP_EOL);
+		fwrite($fh, "quick" . PHP_EOL);
+		fwrite($fh, "user=".$this->dbOptions->database->username . PHP_EOL);
+		fwrite($fh, "password=".$this->dbOptions->database->password . PHP_EOL);
+
+		fclose($fh);
+
+	}
+
+	function cleanUpDefaultsFile() {
+		if(file_exists($this->defaultsFilePath)) unlink($this->defaultsFilePath);
 	}
 
 	/**
@@ -193,13 +221,17 @@ EOQ;
 		//Create the reverse list so we can FIFO them...
 		$tableList = implode(' ', $this->tablesMap);
 
-		$cmd = "sudo mysqldump --defaults-file=/root/.my.cnf --xml -t  $this->database $tableList > $pathToXMLData";
+		$this->writeDefaultsFile();
+
+		$cmd = "mysqldump --defaults-file=$this->defaultsFilePath --xml -t  $this->database $tableList > $pathToXMLData";
 
 		$result = exec($cmd);
 
 		echo $result . PHP_EOL;
 
 		echo "MySQL dump saved to: $pathToXMLData" . PHP_EOL;
+
+		$this->cleanUpDefaultsFile();
 
 	}
 
