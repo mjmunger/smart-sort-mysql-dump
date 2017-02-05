@@ -3,6 +3,35 @@
 
 include("XmlSorter.class.php");
 
+function show_help() {
+?>
+
+SUMMARY
+
+Reads a database, finds the foreign keys, determines their order of
+precedence, and dumps the database tables in the order needed for PHPUnit to
+load them properly.
+
+SYNTAX
+
+    ./sort-xml [-v] [--command] [options]
+
+COMMANDS
+
+    -v           Execute in verbose mode. 
+    --discover   Discover the tables and sort them in order to support foreign
+                 key relationships.
+    --smartdump  Discover the tables ,and dump them in the correct order for 
+                 PHPUnit to import for testing.
+
+EXAMPLE
+    
+    ./sort-xml --smartdump /path/to/dump.xml
+
+
+<?php
+}
+
 $shortopts  = "";
 $shortopts .= "v::d::";  // optional values
 
@@ -12,6 +41,8 @@ $longopts  = array(
 );
 
 $commandLineOptions = getopt($shortopts, $longopts);
+
+if(count($commandLineOptions) == 0) show_help();
 
 if(!file_exists('database.json')) die("You must create and configure database.json so I can connect to the database.");
 
