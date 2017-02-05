@@ -15,4 +15,5 @@ import the tables in the _proper order_ during unit testing.
 #Other options:
 
 The --discover command line option will connect to the database and show you how it plans to sort the tables.
+
 The -v flag will cause the script to output debugging information so you can see what decisions it made during the sorting process.
