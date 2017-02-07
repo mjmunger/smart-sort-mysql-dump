@@ -95,6 +95,26 @@ class XMLSorter
 
 	}
 
+	public function smartSortTables() {
+
+		$reordered = false;
+
+		foreach($this->tablesWithForeignKeys as $table) {
+			printf("%s referenced by (must be above):\n", $table);
+
+			$keys = $this->getForeignKeys($table);
+
+			foreach($keys as $dependentTable) {
+				printf("  -%s\n", $dependentTable);
+
+				//Re-order the table map so that $table is above $dependentTable. If this function returns false, it reordered something, so change / trigger the flag.
+				if(!$this->reorderTableMap($dependentTable,$table)) $reordered = true;
+			}
+		}
+
+		return $reordered;
+	}
+
 	/**
 	 * Discover tables that have a foreign key, and populates them into the array XMLSorter::tablesWithForeignKeys 
 	 **/
@@ -124,21 +144,9 @@ class XMLSorter
 			}
 		}
 
-		printf("Tables with foreign keys:\n");
-
-		foreach($this->tablesWithForeignKeys as $table) {
-			printf("%s referenced by (must be above):\n", $table);
-
-			$keys = $this->getForeignKeys($table);
-
-			foreach($keys as $dependentTable) {
-				printf("  -%s\n", $dependentTable);
-
-				//Re-order the table map so that $table is above $dependentTable.
-				$this->reorderTableMap($dependentTable,$table);
-			}
-
-			echo PHP_EOL;
+		$reordered = true;
+		while($reordered) {
+			$reordered = $this->smartSortTables();
 		}
 
 		printf("Resulting TableMap\n");
