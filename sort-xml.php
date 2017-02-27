@@ -43,8 +43,8 @@ $longopts  = array(
 $commandLineOptions = getopt($shortopts, $longopts);
 
 if(count($commandLineOptions) == 0) show_help();
-
-if(!file_exists('database.json')) die("You must create and configure database.json so I can connect to the database.");
+ 
+if(!file_exists('database.json')) die("You must create and configure database.json so I can connect to the database." . PHP_EOL . PHP_EOL);
 
 $options = json_decode(file_get_contents('database.json'));
 
