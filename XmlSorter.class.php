@@ -208,6 +208,44 @@ EOQ;
 	    } 
 	} 	
 
+	function countRows() {
+		$counts = [];
+
+		foreach($this->tablesMap as $table) {
+			$sql = "SELECT COUNT(*) as rowCount FROM $table";
+			$stmt = $this->pdo->prepare($sql);
+			$result = $stmt->execute();
+
+			if(!$result) continue;
+
+			$row = $stmt->fetchObject();
+
+			$counts[$table] = (int) $row->rowCount;
+		}
+
+		asort($counts);
+
+		foreach($counts as $table => $rowCount) {
+			printf("%s %s" . PHP_EOL, str_pad($rowCount, 6), $table);
+		}
+	}
+
+	function formatBytes($bytes, $precision = 2) { 
+
+	    $units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+
+	    $bytes = max($bytes, 0); 
+	    $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+	    $pow = min($pow, count($units) - 1); 
+
+
+	    // Uncomment one of the following alternatives
+	     $bytes /= pow(1024, $pow);
+	    // $bytes /= (1 << (10 * $pow)); 
+
+	    return round($bytes, $precision) . ' ' . $units[$pow]; 
+	} 
+
 	/**
 	 * Reads a source testing database, determines what tables have foreign
 	 * keys, and sorts the data in the corresponding XML file so that those
@@ -222,12 +260,15 @@ EOQ;
 	 * @param $pathToXMLData string The path to the XML file that was dumped from the testing database.
 	 **/
 
-	function dumpeOrderedXML($pathToXMLData = 'tmp/dump.xml') {
+	function dumpOrderedXML($pathToXMLData = 'tmp/dump.xml') {
 		//Discover the tables that have foriegn keys.
 		$this->discoverTables();
 
 		//Create the reverse list so we can FIFO them...
-		$tableList = implode(' ', $this->tablesMap);
+
+		//remove any tables that are in the exclude array.
+		$targetTables = array_diff($this->tablesMap, $this->dbOptions->exclude);
+		$tableList = implode(' ', $targetTables);
 
 		$this->writeDefaultsFile();
 
@@ -240,6 +281,22 @@ EOQ;
 		echo "MySQL dump saved to: $pathToXMLData" . PHP_EOL;
 
 		$this->cleanUpDefaultsFile();
+
+		$file = new SplFileInfo($pathToXMLData);
+
+		if($file->getSize() > (1024 * 2^10 * 2)) {
+			printf("$pathToXMLData (%s) created.", $this->formatBytes($file->getSize()));
+			echo PHP_EOL;
+			echo PHP_EOL;
+			printf("Your XML data file is larger than 2 MB. Consider optimizing");
+			echo PHP_EOL;
+			printf("it by truncating any tables not specifically in use by this");
+			echo PHP_EOL;
+			printf("test. Below is a list of tables with their rowcounts:");
+			echo PHP_EOL;
+			$this->countRows();
+
+		}
 
 	}
 

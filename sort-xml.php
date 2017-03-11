@@ -21,7 +21,7 @@ COMMANDS
     -v           Execute in verbose mode. 
     --discover   Discover the tables and sort them in order to support foreign
                  key relationships.
-    --smartdump  Discover the tables ,and dump them in the correct order for 
+    --dump  Discover the tables ,and dump them in the correct order for 
                  PHPUnit to import for testing.
 
 EXAMPLE
@@ -37,7 +37,7 @@ $shortopts .= "v::d::";  // optional values
 
 $longopts  = array(
     "discover::",     // optional value
-    "smartdump:",     // Required value
+    "dump:",     // Required value
 );
 
 $commandLineOptions = getopt($shortopts, $longopts);
@@ -62,4 +62,4 @@ if(array_key_exists('v', $commandLineOptions)) $XmlSorter->verbosity = 10;
 
 if(array_key_exists('discover', $commandLineOptions)) $XmlSorter->discoverTables();
 
-if(array_key_exists('smartdump', $commandLineOptions)) $XmlSorter->dumpeOrderedXML($commandLineOptions['smartdump']);
+if(array_key_exists('dump', $commandLineOptions)) $XmlSorter->dumpOrderedXML($commandLineOptions['dump']);
