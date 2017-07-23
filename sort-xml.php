@@ -18,7 +18,8 @@ SYNTAX
 
 COMMANDS
 
-    -v           Execute in verbose mode. 
+    -v           Execute in verbose mode.
+    --config     Prompts for database connection information to create database.json
     --discover   Discover the tables and sort them in order to support foreign
                  key relationships.
     --dump  Discover the tables ,and dump them in the correct order for 
@@ -38,12 +39,15 @@ $shortopts .= "v::d::";  // optional values
 $longopts  = array(
     "discover::",     // optional value
     "dump:",     // Required value
+    "config::"   //
 );
 
 $commandLineOptions = getopt($shortopts, $longopts);
 
+if(array_key_exists('config', $commandLineOptions)) XmlSorter::createConfig();
+
 if(count($commandLineOptions) == 0) show_help();
- 
+
 if(!file_exists('database.json')) die("You must create and configure database.json so I can connect to the database." . PHP_EOL . PHP_EOL);
 
 $options = json_decode(file_get_contents('database.json'));
@@ -63,3 +67,4 @@ if(array_key_exists('v', $commandLineOptions)) $XmlSorter->verbosity = 10;
 if(array_key_exists('discover', $commandLineOptions)) $XmlSorter->discoverTables();
 
 if(array_key_exists('dump', $commandLineOptions)) $XmlSorter->dumpOrderedXML($commandLineOptions['dump']);
+

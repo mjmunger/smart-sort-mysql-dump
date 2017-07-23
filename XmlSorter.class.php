@@ -308,4 +308,50 @@ EOQ;
 	}
 
 
+    public function createConfig() {
+        $handle = fopen ("php://stdin","r");
+        print "Enter database username: " ;
+        $user = trim(fgets($handle));
+
+        print "Enter database password: " ;
+        $pass = trim(fgets($handle));
+
+        print "Enter server address: " ;
+        $server = trim(fgets($handle));
+
+        print "Enter database name: " ;
+        $dbname = trim(fgets($handle));
+
+        fclose($handle);
+
+        $database = [ 'username' => $user
+                    , 'password' => $pass
+                    , 'server'   => $server
+                    , 'database' => $dbname
+                    ];
+        $exclude = [];
+
+        $configs = [];
+        $configs['database'] = $database;
+        $configs['exclude' ] = $exclude;
+
+        $buffer = json_encode($configs);
+
+        $handle = fopen('database.json', 'w');
+        fwrite($handle, $buffer);
+        fclose($handle);
+
+        print "database.json has been written.";
+
+        if(file_exists('.gitignore')) {
+            $handle = fopen('.gitignore','a');
+            fwrite($handle,'database.json' . PHP_EOL);
+            fclose($handle);
+
+            print ".gitgnore was found, so database.json has been added to it.";
+        }
+
+        exit();
+
+    }
 }

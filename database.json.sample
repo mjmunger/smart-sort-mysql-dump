@@ -5,5 +5,5 @@
 		"database" : "bazdatabase",
 		"server"   : "localhost"
 	},
-	"exclude" : [ "settings" ]
+	"exclude" : [  ]
 }
