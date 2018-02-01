@@ -27,7 +27,7 @@ COMMANDS
 
 EXAMPLE
     
-    ./sort-xml --smartdump /path/to/dump.xml
+    ./sort-xml --dump /path/to/dump.xml
 
 
 <?php
@@ -52,7 +52,7 @@ if(!file_exists('database.json')) die("You must create and configure database.js
 
 $options = json_decode(file_get_contents('database.json'));
 
-$dsn = sprintf('mysql:dbname=%s;host=%s', $options->database->database, $options->database->server);
+$dsn = sprintf('mysql:dbname=%s;host=%s;port=%s', $options->database->database, $options->database->server, $options->database->port);
 
 try {
     $pdo = new PDO($dsn, $options->database->username, $options->database->password);

@@ -3,7 +3,8 @@
 		"username" : "foouser",
 		"password" : "foopass",
 		"database" : "bazdatabase",
-		"server"   : "localhost"
+		"server"   : "localhost",
+		"port"     : "3306"
 	},
 	"exclude" : [  ]
 }

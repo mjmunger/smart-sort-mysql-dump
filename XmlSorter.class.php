@@ -26,7 +26,7 @@ class XMLSorter
 		fwrite($fh, "user=" . $this->dbOptions->database->username . PHP_EOL);
 		fwrite($fh, "password=".$this->dbOptions->database->password . PHP_EOL);
 		fwrite($fh, "protocol=tcp" . PHP_EOL);
-		fwrite($fh, "port=3306" . PHP_EOL);
+		fwrite($fh, "port=" . $this->dbOptions->database->port . PHP_EOL);
 		fwrite($fh, "" . PHP_EOL);
 		fwrite($fh, "[mysqldump]" . PHP_EOL);
 		fwrite($fh, "quick" . PHP_EOL);

@@ -1,12 +1,12 @@
 # smart-sort-mysql-dump
 Analyzes a database to determine foreign key relationshps, and then exports those tables in the order that allows foreign key relationships to be imported properly in PHPUnit.
 
-#Requirements:
+## Requirements:
 
 The script assumes the following:
 1. You have root access / root permissions on your system. 
 
-#How to use:
+## How to use:
 
 1. Copy database.json.sample to database.json
 2. Change the contents of database.json to the required values to connect to your testing database.
