@@ -282,10 +282,10 @@ EOQ;
 
 		//Dump the compliment SQL file for easy restoration.
 
-		$cmd = "mysqldump --defaults-file=$this->defaultsFilePath $this->database $tableList > restore.sql";
+		$cmd = "mysqldump --defaults-file=$this->defaultsFilePath $this->database $tableList > $pathToXMLData.restore.sql";
 		$result = exec($cmd);
 		echo $result . PHP_EOL;
-		echo "MySQL SQL dump saved to: restore.sql" . PHP_EOL;
+		echo "MySQL SQL dump saved to: $pathToXMLData.restore.sql" . PHP_EOL;
 
 		$this->cleanUpDefaultsFile();
 
