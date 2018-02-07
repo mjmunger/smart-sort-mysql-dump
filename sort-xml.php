@@ -22,12 +22,17 @@ COMMANDS
     --config     Prompts for database connection information to create database.json
     --discover   Discover the tables and sort them in order to support foreign
                  key relationships.
-    --dump  Discover the tables ,and dump them in the correct order for 
+    --dump       Discover the tables ,and dump them in the correct order for
                  PHPUnit to import for testing.
+    --restore    Restores the XML dataset SQL file that was created from a smart dump.
 
-EXAMPLE
-    
-    ./sort-xml --dump /path/to/dump.xml
+EXAMPLES
+
+    dump:
+    smart-dump --dump /path/to/dump.xml
+
+    restore:
+    smart-dump --restore someXMLDataset
 
 
 <?php
@@ -39,6 +44,7 @@ $shortopts .= "v::d::";  // optional values
 $longopts  = array(
     "discover::",     // optional value
     "dump:",     // Required value
+    "restore:",     // Required value
     "config::"   //
 );
 
@@ -67,4 +73,6 @@ if(array_key_exists('v', $commandLineOptions)) $XmlSorter->verbosity = 10;
 if(array_key_exists('discover', $commandLineOptions)) $XmlSorter->discoverTables();
 
 if(array_key_exists('dump', $commandLineOptions)) $XmlSorter->dumpOrderedXML($commandLineOptions['dump']);
+
+if(array_key_exists('restore', $commandLineOptions)) $XmlSorter->restoreSQL($commandLineOptions['restore']);
 

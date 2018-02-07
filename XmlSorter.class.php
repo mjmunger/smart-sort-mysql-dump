@@ -307,6 +307,46 @@ EOQ;
 
 	}
 
+	public function getDatabaseName($file) {
+	    $fp = fopen($file,'r');
+	    $buffer = fread($fp,300);
+	    $pattern = '/Database: ([a-zA-Z0-9_].+?)\n/s';
+	    $match = [];
+	    $result = preg_match($pattern,$buffer,$match);
+	    return $match[1];
+    }
+
+	public function restoreSQL($datasetXML) {
+	    //Make sure that the requested XML file exists
+
+        $tableXML = $datasetXML.".xml";
+        $restoreFile = $tableXML.'.restore.sql';
+
+        if(file_exists($tableXML) == false) {
+            echo "Looks like $tableXML doesn't exist. Check the file and try again. Or do manually." . PHP_EOL;
+            die();
+        }
+
+        if(file_exists($restoreFile) == false) {
+            echo "I cannot find the restore file for this xml dataset. Ensure $restoreFile exists." . PHP_EOL;
+            die();
+        }
+
+        $dbName = $this->getDatabaseName($restoreFile);
+
+        $this->writeDefaultsFile();
+
+        $cmd = "mysql --defaults-file=$this->defaultsFilePath $dbName < $restoreFile";
+
+        $result = exec($cmd);
+
+        echo $result . PHP_EOL;
+
+        echo "Restore complete. " . PHP_EOL;
+
+        return true;
+
+    }
 
     public function createConfig() {
         $handle = fopen ("php://stdin","r");
