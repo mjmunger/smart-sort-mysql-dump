@@ -9,6 +9,7 @@ class XMLSorter
 	public $tablesMap             = [];
 	public $dbOptions             = NULL;
 	public $defaultsFilePath      = NULL;
+	public $reorderCount          = 0;
 
 	function __construct($options) {
 		$this->pdo       = $options['pdo'];
@@ -47,7 +48,14 @@ class XMLSorter
 	 * 
 	 **/
 
+	public function errorOut() {
+	    echo "Too many table reorderings (exceeded limit of 10,000 attempts). You probably have two tables that reference one another. Remove the foreign key from one of them.". PHP_EOL;
+	    die();
+    }
+
 	public function reorderTableMap($depdendentTable, $table) {
+	    $this->reorderCount++;
+	    if($this->reorderCount > 10000) $this->errorOut();
 
 		if($this->verbosity > 0) printf("$table should be above $depdendentTable...");
 
