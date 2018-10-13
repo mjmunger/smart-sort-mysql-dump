@@ -376,6 +376,7 @@ EOQ;
                     , 'password' => $pass
                     , 'server'   => $server
                     , 'database' => $dbname
+                    , 'port'     => 3306
                     ];
         $exclude = [];
 
@@ -393,13 +394,32 @@ EOQ;
 
         if(file_exists('.gitignore')) {
             $handle = fopen('.gitignore','a');
-            fwrite($handle,'database.json' . PHP_EOL);
+            fwrite($handle,PHP_EOL . 'database.json' . PHP_EOL);
             fclose($handle);
 
             print ".gitgnore was found, so database.json has been added to it.";
+        } else {
+            $handle = fopen('.gitignore','w');
+            fwrite($handle,PHP_EOL . 'database.json' . PHP_EOL);
+            fclose($handle);
+            print ".gitignore created with database.json added to it.";
         }
 
-        exit();
+        $content = <<<EOF
+<Files "log.txt">
+    Order Allow,Deny
+    Deny from all
+</Files>
+EOF;
 
+        if(file_exists('.htaccess')) {
+            print ".htaccess is detected. You should add the following to it in order to keep the database credentials safe." . PHP_EOL;
+            print $content . PHP_EOL;
+        } else {
+            $handle = fopen(".htaccess", 'w');
+            fwrite($handle, $content);
+            fclose($handle);
+        }
+        exit();
     }
 }
